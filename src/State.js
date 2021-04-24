@@ -1,4 +1,5 @@
-class State{
-    static currentUser = null;
-    static currentPage = "traveler";
-}
+import UserRepository from './UserRepository';
+
+export default class State{}
+State.currentUser = UserRepository.getUser(1);
+State.currentPage = "traveler";

@@ -1,3 +1,5 @@
+import DestinationRepository from './DestinationRepository';
+
 export default class Trip {
   constructor(trip) {
     Object.assign(this, trip);
