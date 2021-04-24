@@ -1,11 +1,13 @@
 export default class Trip {
-  constructor(id, userID, destinationID, count, date, duration, status, suggestedActivities) {
-    this.id = id;
-    this.userID = destinationID;
-    this.count = count;
-    this.date = date;
-    this.duration = duration;
-    this.status = status;
-    this.suggestedActivities = suggestedActivities;
+  constructor(trip) {
+    Object.assign(this, trip);
+  }
+  getDestination(){
+    return DestinationRepository.getDestinations().then(data => data.find(destination => destination.id === this.destinationID));
+  }
+  getCost() {
+    const costBeforeFee = (this.getDestination().estimatedLodgingCostPerDay * this.duration) + (this.getDestination().estimatedFlightCostPerPerson * this.travelers);
+    const fee = costBeforeFee * .10;
+    return costBeforeFee + fee;
   }
 }
