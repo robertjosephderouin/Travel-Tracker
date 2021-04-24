@@ -7,15 +7,21 @@
     <header>
       <h1>Travel Tracker</h1>
     </header>
-    <form>
-      <input type="text" autocomplete="off" placeholder="Enter User Name..." required />
-      <input type="text" autocomplete="off" placeholder="Enter Password..." required />
-      <input type="submit" value="Sign In" />
-    </form>
-    <div class="travelerData">
+    <div id="loginPage">
+      <form>
+        <input type="text" autocomplete="off" placeholder="Enter User Name..." required />
+        <input type="text" autocomplete="off" placeholder="Enter Password..." required />
+        <input type="submit" value="Sign In" />
+      </form>
     </div>
-    <button>Create New Trip</button>
-    <div class="agentData">
+    <div id="travelerPage">
+      <div class="travelerData">
+      </div>
+      <button>Create New Trip</button>
+    </div>
+    <div id="agentPage">
+      <div class="agentData">
+      </div>
     </div>
     <footer>
       <button>Sign Out</button>
