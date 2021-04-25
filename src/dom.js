@@ -108,6 +108,7 @@ async function getUserByLogin(e){
   if(username === "agency" && password === "travel2020") {
     State.currentUser = null;
     State.currentPage = "agent";
+    return
   }
   if(matches === null) {
     alert(errorMessage);
