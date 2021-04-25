@@ -15,8 +15,14 @@ const travelerDestinationSelection = document.getElementById('travelerDestinatio
 createNewTrip.addEventListener('submit', createNewTripFormHandler);
 
 function render(){
-  if(State.currentPage === "traveler"){
+  if(State.currentPage === "login") {
+
+  }
+  else if(State.currentPage === "traveler") {
     renderTravelerPage()
+  }
+  else if(State.currentPage === "agent") {
+
   }
 }
 
