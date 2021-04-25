@@ -4,6 +4,7 @@ import {
   isAfter,
   parse,
   sub,
+  isSameDay,
 } from 'date-fns';
 
 
@@ -28,6 +29,14 @@ TripRepository.getTripsForLastYear = () => {
     const lastYear = sub(new Date(), {years: 1});
     const formatDate = parse(trip.date, 'y/MM/dd', new Date());
     return isAfter(formatDate, lastYear);
+  }));
+}
+
+TripRepository.getTripsForSameDay = () => {
+  return TripRepository.getTrips().then(data => data.filter(trip => {
+    const today = new Date();
+    const formatDate = parse(trip.date, 'y/MM/dd', new Date());
+    return isSameDay(formatDate, today);
   }));
 }
 

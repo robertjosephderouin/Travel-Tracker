@@ -66,6 +66,7 @@ async function renderTravelerCost(){
 async function renderAgentPage() {
   await renderPendingTrips();
   await renderAgentEarnings();
+  await renderTodaysTrips();
 }
 
 async function renderAgentEarnings() {
@@ -90,6 +91,26 @@ async function renderPendingTrips(){
     htmlData += `</div>`
   };
   agentData.innerHTML = htmlData;
+}
+
+async function renderTodaysTrips(){
+  let htmlData = "";
+  const trips = (await TripRepository.getTripsForSameDay());
+  console.log(trips);
+  for(const trip of trips){
+    const destination = await trip.getDestination();
+    htmlData += `<div>`
+    htmlData += `<h3>${destination.destination}</h3>`
+    htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
+    htmlData += `<div>${trip.travelers} People Going</div>`
+    htmlData += `<div>Leaving ${trip.date}</div>`
+    htmlData += `<div>${trip.duration} Days On Trip</div>`
+    htmlData += `<div>Trip Status : ${trip.status}</div>`
+    htmlData += `<button data-tripid="${trip.id}" class="deleteTrip">Delete</button>`
+    htmlData += `<button data-tripid="${trip.id}" class="approveTrip">Approve</button>`
+    htmlData += `</div>`
+  };
+  travelersToday.innerHTML = htmlData;
 }
 
 async function renderTrips(){
@@ -136,7 +157,7 @@ async function createNewTripFormHandler(e){
         suggestedActivities: [],
       };
   const tripCost = await (new Trip(trip)).getCost();
-  const confirmResult = confirm(`Trip cost is \$${tripCost}, cool?`);
+  const confirmResult = confirm(`Trip cost is \$${tripCost.total}, cool?`);
   if(confirmResult){
     await TripRepository.newTrip(trip);
   }
