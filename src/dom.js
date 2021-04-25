@@ -6,15 +6,21 @@ import DestinationRepository from './DestinationRepository';
 import State from './State';
 import TripRepository from './TripRepository';
 import Trip from './Trip';
+import UserRepository from './UserRepository';
 
 const travelerData = document.getElementById('travelerData');
 const travelerTotalCost = document.getElementById('travelerTotalCost');
 const createNewTrip = document.getElementById('createNewTrip');
 const travelerDestinationSelection = document.getElementById('travelerDestinationSelection');
+const login = document.getElementById('login');
+const signOut = document.getElementById('signOut');
 
 createNewTrip.addEventListener('submit', createNewTripFormHandler);
+signOut.addEventListener('click', logOut);
+login.addEventListener('submit', getUserByLogin);
 
 function render(){
+  showPage(State.currentPage);
   if(State.currentPage === "login") {
 
   }
@@ -90,6 +96,51 @@ async function createNewTripFormHandler(e){
   if(confirmResult){
     await TripRepository.newTrip(trip);
   }
+  render();
+}
+
+async function getUserByLogin(e){
+  e.preventDefault();
+  const errorMessage = "Your user name or password is invalid. Please try again."
+  const username = login["userName"].value;
+  const password = login["userPassword"].value;
+  const matches = username.match(/traveler(\d+)/);
+  if(username === "agency" && password === "travel2020") {
+    State.currentUser = null;
+    State.currentPage = "agent";
+  }
+  if(matches === null) {
+    alert(errorMessage);
+  } else {
+    const userID = Number(matches[1]);
+    if((await UserRepository.getUsers()).find(user => user.id === userID)){
+      if(password === "travel2020") {
+        State.currentUser = UserRepository.getUser(userID);
+        State.currentPage = "traveler";
+        render();
+      } else {
+        alert(errorMessage);
+      }
+    } else {
+      alert(errorMessage);
+    }
+  }
+  login.reset();
+}
+
+function showPage(page){
+  Array.from(document.querySelectorAll(".page")).forEach(page => page.classList.add("hide"));
+  document.getElementById(page + "Page").classList.remove("hide");
+  if(page === "login"){
+    signOut.classList.add("hide");
+  } else {
+    signOut.classList.remove("hide");
+  }
+}
+
+function logOut(){
+  State.currentPage = "login";
+  State.currentUser = null;
   render();
 }
 
