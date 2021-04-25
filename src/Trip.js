@@ -11,7 +11,7 @@ export default class Trip {
     return this.getDestination().then(destination => {
       const costBeforeFee = (destination.estimatedLodgingCostPerDay * this.duration) + (destination.estimatedFlightCostPerPerson * this.travelers);
       const fee = costBeforeFee * .10;
-      return Promise.resolve(costBeforeFee + fee);
+      return costBeforeFee + fee;
     });
   }
 }
