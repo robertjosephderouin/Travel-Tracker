@@ -15,3 +15,7 @@ TripRepository.getTrips = () => {
       return TripRepository.trips;
     });
 }
+
+TripRepository.newTrip = (date, duration, capacity, destination) => {
+
+}
