@@ -1,5 +1,26 @@
-.travelerData {
+$black: #161722;
+$white: #e4e5f1;
+$lightAccent: #cacde8;
+$darkAccent: #25273c;
+$primary: #777a92;
+
+body {
+  background-color: $primary;
+  font-family: "Quicksand", sans-serif;
+  color: $white;
+}
+
+.dataSet {
   display:flex;
+}
+
+.dataCard {
+
+}
+
+.newTrip {
+  display:flex;
+  flex-wrap: wrap;
 }
 
 .hide {

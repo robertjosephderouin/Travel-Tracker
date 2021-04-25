@@ -16,10 +16,15 @@ const createNewTrip = document.getElementById('createNewTrip');
 const travelerDestinationSelection = document.getElementById('travelerDestinationSelection');
 const login = document.getElementById('login');
 const signOut = document.getElementById('signOut');
+const agentSearch = document.getElementById('agentSearch');
+const agentSearchBar = document.getElementById('agentSearchBar');
+const searchedTravelers = document.getElementById('searchedTravelers');
+const searchHeader = document.getElementById('searchHeader')
 
 createNewTrip.addEventListener('submit', createNewTripFormHandler);
 signOut.addEventListener('click', logOut);
 login.addEventListener('submit', getUserByLogin);
+agentSearch.addEventListener('submit', renderSearchedUserTrips)
 document.body.addEventListener('click', async e => {
   if(e.target.matches(".deleteTrip")){
     const deleteButton = e.target;
@@ -66,6 +71,7 @@ async function renderTravelerCost(){
 async function renderAgentPage() {
   await renderPendingTrips();
   await renderAgentEarnings();
+  await renderTodaysTrips();
 }
 
 async function renderAgentEarnings() {
@@ -73,12 +79,34 @@ async function renderAgentEarnings() {
   agentTotalEarnings.innerHTML =  `You have earned \$${earnings.toFixed(2)} in agent fees this year!`
 }
 
+async function renderSearchedUserTrips(e){
+  e.preventDefault();
+  let htmlData = "";
+  const searchedUser = (await UserRepository.getUsers()).find(user => user.name === agentSearchBar.value);
+  const trips = (await TripRepository.getTrips()).filter(trip => trip.userID === searchedUser.id);
+  let htmlCostData = 0;
+  for(const trip of trips){
+    const destination = await trip.getDestination();
+    htmlCostData += (await(trip.getCost())).fee;
+    htmlData += `<div class="dataCard">`
+    htmlData += `<h3>${destination.destination}</h3>`
+    htmlData += `<div>Trip Status : ${trip.status}</div>`
+    htmlData += `<button data-tripid="${trip.id}" class="deleteTrip">Delete</button>`
+    htmlData += `<button data-tripid="${trip.id}" class="approveTrip">Approve</button>`
+    htmlData += `</div>`
+  };
+  searchHeader.innerHTML = `<h3>This searched user has earned you \$${htmlCostData} in agent fees.</h3>`;
+  searchedTravelers.innerHTML = htmlData;
+  render();
+}
+
+
 async function renderPendingTrips(){
   let htmlData = "";
   const trips = (await TripRepository.getTrips()).filter(trip => trip.status === "pending");
   for(const trip of trips){
     const destination = await trip.getDestination();
-    htmlData += `<div>`
+    htmlData += `<div class="dataCard">`
     htmlData += `<h3>${destination.destination}</h3>`
     htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
     htmlData += `<div>${trip.travelers} People Going</div>`
@@ -92,12 +120,32 @@ async function renderPendingTrips(){
   agentData.innerHTML = htmlData;
 }
 
+async function renderTodaysTrips(){
+  let htmlData = "";
+  const trips = (await TripRepository.getTripsForSameDay());
+  console.log(trips);
+  for(const trip of trips){
+    const destination = await trip.getDestination();
+    htmlData += `<div class="dataCard">`
+    htmlData += `<h3>${destination.destination}</h3>`
+    htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
+    htmlData += `<div>${trip.travelers} People Going</div>`
+    htmlData += `<div>Leaving ${trip.date}</div>`
+    htmlData += `<div>${trip.duration} Days On Trip</div>`
+    htmlData += `<div>Trip Status : ${trip.status}</div>`
+    htmlData += `<button data-tripid="${trip.id}" class="deleteTrip">Delete</button>`
+    htmlData += `<button data-tripid="${trip.id}" class="approveTrip">Approve</button>`
+    htmlData += `</div>`
+  };
+  travelersToday.innerHTML = htmlData;
+}
+
 async function renderTrips(){
   let htmlData = "";
   const trips = await State.currentUser.then(user => user.getTrips());
   for(const trip of trips){
     const destination = await trip.getDestination();
-    htmlData += `<div>`
+    htmlData += `<div class="dataCard">`
     htmlData += `<h3>${destination.destination}</h3>`
     htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
     htmlData += `<div>${trip.travelers} People Going</div>`

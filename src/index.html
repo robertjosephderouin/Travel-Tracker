@@ -17,23 +17,35 @@
     <div class="page hide" id="travelerPage">
       <div id="travelerTotalCost">
       </div>
-      <div id="travelerData" class="travelerData">
+      <div class="dataSet" id="travelerData" class="travelerData">
       </div>
-      <form id="createNewTrip">
-        <label for="travelerDateSelection">Choose Date</label>
-        <input id="travelerDateSelection" type="date" required/>
-        <label for="travelerDurationSelection">Choose Duration</label>
-        <input id="travelerDurationSelection" min="1" value="1" type="number" step="1" required/>
-        <label for="travelerNumberSelection">Choose Amount of Travelers</label>
-        <input id="travelerNumberSelection" min="1" value="1" type="number" step="1" required/>
-        <label for="travelerDestinationSelection">Choose Destination</label>
-        <select id="travelerDestinationSelection"></select>
-        <input type="submit" value="Apply For Trip"/>
-      </form>
+      <div class="newTrip">
+        <form id="createNewTrip">
+          <label for="travelerDateSelection">Choose Date</label>
+          <input id="travelerDateSelection" type="date" required/>
+          <label for="travelerDurationSelection">Choose Duration</label>
+          <input id="travelerDurationSelection" min="1" value="1" type="number" step="1" required/>
+          <label for="travelerNumberSelection">Choose Amount of Travelers</label>
+          <input id="travelerNumberSelection" min="1" value="1" type="number" step="1" required/>
+          <label for="travelerDestinationSelection">Choose Destination</label>
+          <select id="travelerDestinationSelection"></select>
+          <input type="submit" value="Apply For Trip"/>
+        </form>
+      </div>
     </div>
     <div class="page hide" id="agentPage">
       <div id="agentTotalEarnings"></div>
-      <div id="agentData">
+      <form id="agentSearch">
+        <input id="agentSearchBar" type="text" autocomplete="off" placeholder="Search users by name..." required />
+        <input id="agentSearchButton" type="submit" value="Search" />
+      </form>
+      <div id="searchHeader"></div>
+      <div class="dataSet" id="searchedTravelers"></div>
+      <h3>Today's Trips</h3>
+      <div class="dataSet" id="travelersToday">
+      </div>
+      <h3>Pending Trips</h3>
+      <div class="dataSet" id="agentData">
       </div>
     </div>
     <footer id="signOut" class="signOut hide">
