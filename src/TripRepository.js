@@ -33,3 +33,38 @@ TripRepository.newTrip = (trip) => {
     });
   })
 }
+
+TripRepository.deleteTrip = (id) => {
+  return new Promise((resolve, reject) => {
+    fetch(`http://localhost:3001/api/v1/trips/${id}`, {
+      method: 'DELETE'
+    }).then(() => {
+      TripRepository.getTrips().then(trips => {
+        const deletedTrip = trips.findIndex(trip => trip.id === id)
+        trips.splice(deletedTrip, 1);
+        resolve();
+      })
+    })
+  })
+}
+
+TripRepository.approveTrip = (id) => {
+  return new Promise((resolve, reject) => {
+    fetch('http://localhost:3001/api/v1/updateTrip', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+        },
+      body: JSON.stringify({
+        id: id,
+        status: 'approved',
+      }),
+    }).then(() => {
+      TripRepository.getTrips().then(trips => {
+        const approvedTrip = trips.find(trip => trip.id === id)
+        approvedTrip.status = 'approved';
+        resolve();
+      })
+    })
+  })
+}

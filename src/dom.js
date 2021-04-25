@@ -9,6 +9,7 @@ import Trip from './Trip';
 import UserRepository from './UserRepository';
 
 const travelerData = document.getElementById('travelerData');
+const agentData = document.getElementById('agentData');
 const travelerTotalCost = document.getElementById('travelerTotalCost');
 const createNewTrip = document.getElementById('createNewTrip');
 const travelerDestinationSelection = document.getElementById('travelerDestinationSelection');
@@ -28,7 +29,7 @@ function render(){
     renderTravelerPage()
   }
   else if(State.currentPage === "agent") {
-
+    renderAgentPage();
   }
 }
 
@@ -46,6 +47,29 @@ async function renderTravelerCost(){
     totalCost += await trip.getCost();
   }
   travelerTotalCost.innerHTML = `Welcome back ${user.name} your total cost for trips in the past 365 days is \$${totalCost}`;
+}
+
+async function renderAgentPage() {
+  await renderPendingTrips();
+}
+
+async function renderPendingTrips(){
+  let htmlData = "";
+  const trips = (await TripRepository.getTrips()).filter(trip => trip.status === "pending");
+  for(const trip of trips){
+    const destination = await trip.getDestination();
+    htmlData += `<div>`
+    htmlData += `<h3>${destination.destination}</h3>`
+    htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
+    htmlData += `<div>${trip.travelers} People Going</div>`
+    htmlData += `<div>Leaving ${trip.date}</div>`
+    htmlData += `<div>${trip.duration} Days On Trip</div>`
+    htmlData += `<div>Trip Status : ${trip.status}</div>`
+    htmlData += `<button id="${trip.id}-delete">Delete</button>`
+    htmlData += `<button id="${trip.id}-approve">Approve</button>`
+    htmlData += `</div>`
+  };
+  agentData.innerHTML = htmlData;
 }
 
 async function renderTrips(){
@@ -108,6 +132,7 @@ async function getUserByLogin(e){
   if(username === "agency" && password === "travel2020") {
     State.currentUser = null;
     State.currentPage = "agent";
+    render();
     return
   }
   if(matches === null) {
