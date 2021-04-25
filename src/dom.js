@@ -88,7 +88,7 @@ async function renderSearchedUserTrips(e){
   for(const trip of trips){
     const destination = await trip.getDestination();
     htmlCostData += (await(trip.getCost())).fee;
-    htmlData += `<div>`
+    htmlData += `<div class="dataCard">`
     htmlData += `<h3>${destination.destination}</h3>`
     htmlData += `<div>Trip Status : ${trip.status}</div>`
     htmlData += `<button data-tripid="${trip.id}" class="deleteTrip">Delete</button>`
@@ -106,7 +106,7 @@ async function renderPendingTrips(){
   const trips = (await TripRepository.getTrips()).filter(trip => trip.status === "pending");
   for(const trip of trips){
     const destination = await trip.getDestination();
-    htmlData += `<div>`
+    htmlData += `<div class="dataCard">`
     htmlData += `<h3>${destination.destination}</h3>`
     htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
     htmlData += `<div>${trip.travelers} People Going</div>`
@@ -126,7 +126,7 @@ async function renderTodaysTrips(){
   console.log(trips);
   for(const trip of trips){
     const destination = await trip.getDestination();
-    htmlData += `<div>`
+    htmlData += `<div class="dataCard">`
     htmlData += `<h3>${destination.destination}</h3>`
     htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
     htmlData += `<div>${trip.travelers} People Going</div>`
@@ -145,7 +145,7 @@ async function renderTrips(){
   const trips = await State.currentUser.then(user => user.getTrips());
   for(const trip of trips){
     const destination = await trip.getDestination();
-    htmlData += `<div>`
+    htmlData += `<div class="dataCard">`
     htmlData += `<h3>${destination.destination}</h3>`
     htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
     htmlData += `<div>${trip.travelers} People Going</div>`
