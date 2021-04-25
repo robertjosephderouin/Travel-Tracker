@@ -1,5 +1,11 @@
 import Trip from './Trip';
 import State from './State';
+import {
+  isAfter,
+  parse,
+  sub,
+} from 'date-fns';
+
 
 export default class TripRepository {}
 
@@ -15,6 +21,24 @@ TripRepository.getTrips = () => {
       TripRepository.trips = data.trips.map(trip => new Trip(trip));
       return TripRepository.trips;
     });
+}
+
+TripRepository.getTripsForLastYear = () => {
+  return TripRepository.getTrips().then(data => data.filter(trip => {
+    const lastYear = sub(new Date(), {years: 1});
+    const formatDate = parse(trip.date, 'y/MM/dd', new Date());
+    return isAfter(formatDate, lastYear);
+  }));
+}
+
+TripRepository.calculateAgentEarnings = async () => {
+    const trips = await TripRepository.getTripsForLastYear();
+    let allTrips = 0;
+    for(const trip of trips) {
+      const cost = (await trip.getCost()).fee;
+      allTrips += cost;
+    }
+    return allTrips;
 }
 
 TripRepository.newTrip = (trip) => {

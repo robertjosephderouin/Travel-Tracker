@@ -10,6 +10,7 @@ import UserRepository from './UserRepository';
 
 const travelerData = document.getElementById('travelerData');
 const agentData = document.getElementById('agentData');
+const agentTotalEarnings = document.getElementById('agentTotalEarnings');
 const travelerTotalCost = document.getElementById('travelerTotalCost');
 const createNewTrip = document.getElementById('createNewTrip');
 const travelerDestinationSelection = document.getElementById('travelerDestinationSelection');
@@ -44,13 +45,19 @@ async function renderTravelerCost(){
   let totalCost = 0;
   const trips = await State.currentUser.then(user => user.getTripsForLastYear());
   for(const trip of trips){
-    totalCost += await trip.getCost();
+    totalCost += (await trip.getCost()).total;
   }
   travelerTotalCost.innerHTML = `Welcome back ${user.name} your total cost for trips in the past 365 days is \$${totalCost}`;
 }
 
 async function renderAgentPage() {
   await renderPendingTrips();
+  await renderAgentEarnings();
+}
+
+async function renderAgentEarnings() {
+  const earnings = await TripRepository.calculateAgentEarnings();
+  agentTotalEarnings.innerHTML =  `You have earned \$${earnings.toFixed(2)} in agent fees this year!`
 }
 
 async function renderPendingTrips(){
