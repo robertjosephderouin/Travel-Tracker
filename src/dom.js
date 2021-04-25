@@ -20,6 +20,19 @@ const signOut = document.getElementById('signOut');
 createNewTrip.addEventListener('submit', createNewTripFormHandler);
 signOut.addEventListener('click', logOut);
 login.addEventListener('submit', getUserByLogin);
+document.body.addEventListener('click', async e => {
+  if(e.target.matches(".deleteTrip")){
+    const deleteButton = e.target;
+    const deleteID = Number(deleteButton.dataset.tripid);
+    await TripRepository.deleteTrip(deleteID);
+    render();
+  } else if(e.target.matches(".approveTrip")){
+    const approveButton = e.target;
+    const approveID = Number(approveButton.dataset.tripid);
+    await TripRepository.approveTrip(approveID);
+    render();
+  }
+});
 
 function render(){
   showPage(State.currentPage);
@@ -72,8 +85,8 @@ async function renderPendingTrips(){
     htmlData += `<div>Leaving ${trip.date}</div>`
     htmlData += `<div>${trip.duration} Days On Trip</div>`
     htmlData += `<div>Trip Status : ${trip.status}</div>`
-    htmlData += `<button id="${trip.id}-delete">Delete</button>`
-    htmlData += `<button id="${trip.id}-approve">Approve</button>`
+    htmlData += `<button data-tripid="${trip.id}" class="deleteTrip">Delete</button>`
+    htmlData += `<button data-tripid="${trip.id}" class="approveTrip">Approve</button>`
     htmlData += `</div>`
   };
   agentData.innerHTML = htmlData;
@@ -139,6 +152,7 @@ async function getUserByLogin(e){
   if(username === "agency" && password === "travel2020") {
     State.currentUser = null;
     State.currentPage = "agent";
+    login.reset();
     render();
     return
   }
