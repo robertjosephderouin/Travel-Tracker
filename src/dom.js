@@ -16,10 +16,14 @@ const createNewTrip = document.getElementById('createNewTrip');
 const travelerDestinationSelection = document.getElementById('travelerDestinationSelection');
 const login = document.getElementById('login');
 const signOut = document.getElementById('signOut');
+const agentSearchBar = document.getElementById('agentSearchBar');
+const agentSearchButton = document.getElementById('agentSearchButton');
+const searchedTravelers = document.getElementById('searchedTravelers');
 
 createNewTrip.addEventListener('submit', createNewTripFormHandler);
 signOut.addEventListener('click', logOut);
 login.addEventListener('submit', getUserByLogin);
+agentSearchButton.addEventListener('submit', renderSearchedUserTrips)
 document.body.addEventListener('click', async e => {
   if(e.target.matches(".deleteTrip")){
     const deleteButton = e.target;
@@ -72,6 +76,31 @@ async function renderAgentPage() {
 async function renderAgentEarnings() {
   const earnings = await TripRepository.calculateAgentEarnings();
   agentTotalEarnings.innerHTML =  `You have earned \$${earnings.toFixed(2)} in agent fees this year!`
+}
+
+async function renderSearchedUserTrips(e){
+  e.preventDefault();
+  let htmlData = "";
+  const searchedUser = (await UserRepository.getUsers()).filter(user => user.name === agentSearchBar.value);
+  const trips = (await TripRepository.getTrips()).filter(trip => trip.userID === searchedUser.name);
+  for(const trip of trips){
+    const destination = await trip.getDestination();
+    htmlData += `<div>`
+    htmlData += `<h3>${destination.destination}</h3>`
+    htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
+    htmlData += `<div>${trip.travelers} People Going</div>`
+    htmlData += `<div>Leaving ${trip.date}</div>`
+    htmlData += `<div>${trip.duration} Days On Trip</div>`
+    htmlData += `<div>Trip Status : ${trip.status}</div>`
+    htmlData += `<button data-tripid="${trip.id}" class="deleteTrip">Delete</button>`
+    htmlData += `<button data-tripid="${trip.id}" class="approveTrip">Approve</button>`
+    htmlData += `</div>`
+  };
+  searchedTravelers.innerHTML = htmlData;
+  if(searchedUser === []){
+    const noUserError = confirm(`No such user found, please check your spelling and try again.`);
+    return noUserError
+  }
 }
 
 async function renderPendingTrips(){
