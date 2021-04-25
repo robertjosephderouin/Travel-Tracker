@@ -136,7 +136,7 @@ async function createNewTripFormHandler(e){
         suggestedActivities: [],
       };
   const tripCost = await (new Trip(trip)).getCost();
-  const confirmResult = confirm(`Trip cost is \$${tripCost}, cool?`);
+  const confirmResult = confirm(`Trip cost is \$${tripCost.total}, cool?`);
   if(confirmResult){
     await TripRepository.newTrip(trip);
   }
