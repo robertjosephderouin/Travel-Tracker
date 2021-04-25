@@ -1,5 +1,10 @@
+import {
+  format,
+  parse,
+} from 'date-fns';
 import DestinationRepository from './DestinationRepository';
 import State from './State';
+import TripRepository from './TripRepository';
 
 const travelerData = document.getElementById('travelerData');
 const travelerTotalCost = document.getElementById('travelerTotalCost');
@@ -56,9 +61,14 @@ async function renderDestinations(){
   travelerDestinationSelection.innerHTML = htmlDestinations;
 }
 
-function createNewTripFormHandler(e){
+async function createNewTripFormHandler(e){
   e.preventDefault();
-
+  const date = format(parse(createNewTrip["travelerDateSelection"].value, 'yyyy-MM-dd', new Date()), 'y/MM/dd');
+  const duration = createNewTrip["travelerDurationSelection"].value;
+  const amountOfTravelers = createNewTrip["travelerNumberSelection"].value;
+  const travelerDestinationSelection = createNewTrip["travelerDestinationSelection"].value;
+  await TripRepository.newTrip(date, duration, amountOfTravelers, travelerDestinationSelection);
+  render();
 }
 
 render();
