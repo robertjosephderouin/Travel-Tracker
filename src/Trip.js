@@ -8,8 +8,10 @@ export default class Trip {
     return DestinationRepository.getDestinations().then(data => data.find(destination => destination.id === this.destinationID));
   }
   getCost() {
-    const costBeforeFee = (this.getDestination().estimatedLodgingCostPerDay * this.duration) + (this.getDestination().estimatedFlightCostPerPerson * this.travelers);
-    const fee = costBeforeFee * .10;
-    return costBeforeFee + fee;
+    return this.getDestination().then(destination => {
+      const costBeforeFee = (destination.estimatedLodgingCostPerDay * this.duration) + (destination.estimatedFlightCostPerPerson * this.travelers);
+      const fee = costBeforeFee * .10;
+      return Promise.resolve(costBeforeFee + fee);
+    });
   }
 }
