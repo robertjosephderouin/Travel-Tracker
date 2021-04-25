@@ -5,6 +5,7 @@ import {
 import DestinationRepository from './DestinationRepository';
 import State from './State';
 import TripRepository from './TripRepository';
+import Trip from './Trip';
 
 const travelerData = document.getElementById('travelerData');
 const travelerTotalCost = document.getElementById('travelerTotalCost');
@@ -67,7 +68,22 @@ async function createNewTripFormHandler(e){
   const duration = createNewTrip["travelerDurationSelection"].value;
   const amountOfTravelers = createNewTrip["travelerNumberSelection"].value;
   const travelerDestinationSelection = createNewTrip["travelerDestinationSelection"].value;
-  await TripRepository.newTrip(date, duration, amountOfTravelers, travelerDestinationSelection);
+  const userID = (await State.currentUser).id;
+  const trip = {
+        id: Math.floor(Math.random() * 100000),
+        userID: userID,
+        duration: Number(duration),
+        destinationID: Number(travelerDestinationSelection),
+        travelers: Number(amountOfTravelers),
+        date: date,
+        status: 'pending',
+        suggestedActivities: [],
+      };
+  const tripCost = await (new Trip(trip)).getCost();
+  const confirmResult = confirm(`Trip cost is \$${tripCost}, cool?`);
+  if(confirmResult){
+    await TripRepository.newTrip(trip);
+  }
   render();
 }
 
