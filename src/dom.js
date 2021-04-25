@@ -9,6 +9,8 @@ import Trip from './Trip';
 import UserRepository from './UserRepository';
 
 const travelerData = document.getElementById('travelerData');
+const agentData = document.getElementById('agentData');
+const agentTotalEarnings = document.getElementById('agentTotalEarnings');
 const travelerTotalCost = document.getElementById('travelerTotalCost');
 const createNewTrip = document.getElementById('createNewTrip');
 const travelerDestinationSelection = document.getElementById('travelerDestinationSelection');
@@ -18,6 +20,19 @@ const signOut = document.getElementById('signOut');
 createNewTrip.addEventListener('submit', createNewTripFormHandler);
 signOut.addEventListener('click', logOut);
 login.addEventListener('submit', getUserByLogin);
+document.body.addEventListener('click', async e => {
+  if(e.target.matches(".deleteTrip")){
+    const deleteButton = e.target;
+    const deleteID = Number(deleteButton.dataset.tripid);
+    await TripRepository.deleteTrip(deleteID);
+    render();
+  } else if(e.target.matches(".approveTrip")){
+    const approveButton = e.target;
+    const approveID = Number(approveButton.dataset.tripid);
+    await TripRepository.approveTrip(approveID);
+    render();
+  }
+});
 
 function render(){
   showPage(State.currentPage);
@@ -28,7 +43,7 @@ function render(){
     renderTravelerPage()
   }
   else if(State.currentPage === "agent") {
-
+    renderAgentPage();
   }
 }
 
@@ -43,9 +58,38 @@ async function renderTravelerCost(){
   let totalCost = 0;
   const trips = await State.currentUser.then(user => user.getTripsForLastYear());
   for(const trip of trips){
-    totalCost += await trip.getCost();
+    totalCost += (await trip.getCost()).total;
   }
   travelerTotalCost.innerHTML = `Welcome back ${user.name} your total cost for trips in the past 365 days is \$${totalCost}`;
+}
+
+async function renderAgentPage() {
+  await renderPendingTrips();
+  await renderAgentEarnings();
+}
+
+async function renderAgentEarnings() {
+  const earnings = await TripRepository.calculateAgentEarnings();
+  agentTotalEarnings.innerHTML =  `You have earned \$${earnings.toFixed(2)} in agent fees this year!`
+}
+
+async function renderPendingTrips(){
+  let htmlData = "";
+  const trips = (await TripRepository.getTrips()).filter(trip => trip.status === "pending");
+  for(const trip of trips){
+    const destination = await trip.getDestination();
+    htmlData += `<div>`
+    htmlData += `<h3>${destination.destination}</h3>`
+    htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
+    htmlData += `<div>${trip.travelers} People Going</div>`
+    htmlData += `<div>Leaving ${trip.date}</div>`
+    htmlData += `<div>${trip.duration} Days On Trip</div>`
+    htmlData += `<div>Trip Status : ${trip.status}</div>`
+    htmlData += `<button data-tripid="${trip.id}" class="deleteTrip">Delete</button>`
+    htmlData += `<button data-tripid="${trip.id}" class="approveTrip">Approve</button>`
+    htmlData += `</div>`
+  };
+  agentData.innerHTML = htmlData;
 }
 
 async function renderTrips(){
@@ -108,6 +152,9 @@ async function getUserByLogin(e){
   if(username === "agency" && password === "travel2020") {
     State.currentUser = null;
     State.currentPage = "agent";
+    login.reset();
+    render();
+    return
   }
   if(matches === null) {
     alert(errorMessage);
