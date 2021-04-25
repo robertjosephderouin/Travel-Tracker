@@ -9,13 +9,19 @@ function render(){
 }
 
 async function renderTraveler(){
-  let htmlData = "<ul>";
+  let htmlData = "";
   const trips = await State.currentUser.then(user => user.getTrips());
   for(const trip of trips){
     const destination = await trip.getDestination();
-    htmlData += `${destination.destination}</li>`
+    htmlData += `<div>`
+    htmlData += `<div>${destination.destination}</div>`
+    htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
+    htmlData += `<div>${trip.travelers} People Going</div>`
+    htmlData += `<div>Leaving ${trip.date}</div>`
+    htmlData += `<div>${trip.duration} Days On Trip</div>`
+    htmlData += `<div>Trip Status : ${trip.status}</div>`
+    htmlData += `</div>`
   };
-  htmlData += "</ul>";
   travelerData.innerHTML = htmlData;
 }
 
