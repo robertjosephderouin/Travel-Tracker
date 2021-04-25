@@ -1,17 +1,28 @@
+import {
+  format,
+  parse,
+} from 'date-fns';
+import DestinationRepository from './DestinationRepository';
 import State from './State';
+import TripRepository from './TripRepository';
 
 const travelerData = document.getElementById('travelerData');
 const travelerTotalCost = document.getElementById('travelerTotalCost');
+const createNewTrip = document.getElementById('createNewTrip');
+const travelerDestinationSelection = document.getElementById('travelerDestinationSelection');
+
+createNewTrip.addEventListener('submit', createNewTripFormHandler);
 
 function render(){
   if(State.currentPage === "traveler"){
-    renderTraveler()
+    renderTravelerPage()
   }
 }
 
-async function renderTraveler(){
+async function renderTravelerPage(){
   await renderTravelerCost();
   await renderTrips();
+  await renderDestinations();
 }
 
 async function renderTravelerCost(){
@@ -39,6 +50,25 @@ async function renderTrips(){
     htmlData += `</div>`
   };
   travelerData.innerHTML = htmlData;
+}
+
+async function renderDestinations(){
+  let htmlDestinations = "";
+  const destinations = await DestinationRepository.getDestinations();
+  for(const destination of destinations){
+    htmlDestinations += `<option value=${destination.id}>${destination.destination}</option>`
+  };
+  travelerDestinationSelection.innerHTML = htmlDestinations;
+}
+
+async function createNewTripFormHandler(e){
+  e.preventDefault();
+  const date = format(parse(createNewTrip["travelerDateSelection"].value, 'yyyy-MM-dd', new Date()), 'y/MM/dd');
+  const duration = createNewTrip["travelerDurationSelection"].value;
+  const amountOfTravelers = createNewTrip["travelerNumberSelection"].value;
+  const travelerDestinationSelection = createNewTrip["travelerDestinationSelection"].value;
+  await TripRepository.newTrip(date, duration, amountOfTravelers, travelerDestinationSelection);
+  render();
 }
 
 render();

@@ -19,7 +19,17 @@
       </div>
       <div id="travelerData" class="travelerData">
       </div>
-      <button>Create New Trip</button>
+      <form id="createNewTrip">
+        <label for="travelerDateSelection">Choose Date</label>
+        <input id="travelerDateSelection" type="date" required/>
+        <label for="travelerDurationSelection">Choose Duration</label>
+        <input id="travelerDurationSelection" min="1" value="1" type="number" step="1" required/>
+        <label for="travelerNumberSelection">Choose Amount of Travelers</label>
+        <input id="travelerNumberSelection" min="1" value="1" type="number" step="1" required/>
+        <label for="travelerDestinationSelection">Choose Destination</label>
+        <select id="travelerDestinationSelection"></select>
+        <input type="submit" value="Apply For Trip"/>
+      </form>
     </div>
     <div id="agentPage">
       <div id="agentData">
