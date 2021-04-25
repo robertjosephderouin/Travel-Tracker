@@ -17,20 +17,9 @@ TripRepository.getTrips = () => {
     });
 }
 
-TripRepository.newTrip = (date, duration, capacity, destination) => {
+TripRepository.newTrip = (trip) => {
   return new Promise((resolve, reject) => {
     State.currentUser.then(user => {
-      const trip = {
-        id: Math.floor(Math.random() * 100000),
-        userID: user.id,
-        duration: Number(duration),
-        destinationID: Number(destination),
-        travelers: Number(capacity),
-        date: date,
-        status: 'pending',
-        suggestedActivities: [],
-      };
-      console.log(trip);
       fetch('http://localhost:3001/api/v1/trips', {
         method: 'POST',
         body: JSON.stringify(trip),

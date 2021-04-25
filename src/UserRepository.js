@@ -11,7 +11,7 @@ UserRepository.getUsers = () => {
   return fetch('http://localhost:3001/api/v1/travelers')
     .then(response => response.json())
     .then(data => {
-      UserRepository.users = data.map(user => new User(user));
+      UserRepository.users = data.travelers.map(user => new User(user));
       return UserRepository.users;
     });
 }
