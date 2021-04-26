@@ -1,7 +1,7 @@
 import chai from 'chai';
+import Destination from '../src/Destination.js';
 const expect = chai.expect;
-
-const Destination = require('../src/Destination.js')
+var assert = require('chai').assert;
 
 let sampleDestination = {
             "id": 1,
@@ -12,9 +12,43 @@ let sampleDestination = {
             "alt": "overview of city buildings with a clear sky"
 }
 
-describe('Destination should be a class', function() {
-  it('should be a function', function() {
-    expect(Destination).to.be.a('function')
+  describe('Destination', function() {
+
+    it('should have a id', function() {
+      var destination = new Destination(sampleDestination);
+
+      assert.equal(destination.id, '1');
+
+  });
+
+    it('should have a destination', function() {
+      var destination = new Destination(sampleDestination);
+
+      assert.equal(destination.destination, 'Lima, Peru');
+
+  });
+
+
+    it('should have a lodging cost per day', function() {
+      var destination = new Destination(sampleDestination);
+
+      assert.equal(destination.estimatedLodgingCostPerDay, 70);
+
+  });
+
+
+    it('should have a lodging cost per person', function() {
+      var destination = new Destination(sampleDestination);
+
+      assert.equal(destination.estimatedFlightCostPerPerson, 400);
+
+  });
+
+    it('should have an alt text', function() {
+    var destination = new Destination(sampleDestination);
+
+    assert.equal(destination.alt, "overview of city buildings with a clear sky");
+
   });
 
 });
