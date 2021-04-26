@@ -62,7 +62,8 @@ TripRepository.newTrip = (trip) => {
       }).then(() => {
         TripRepository.trips.push(new Trip(trip));
         resolve();
-      });
+      })
+      .catch(e => reject(e));
     });
   })
 }
@@ -77,7 +78,9 @@ TripRepository.deleteTrip = (id) => {
         trips.splice(deletedTrip, 1);
         resolve();
       })
+      .catch(e => reject(e));
     })
+    .catch(e => reject(e));
   })
 }
 
@@ -98,6 +101,8 @@ TripRepository.approveTrip = (id) => {
         approvedTrip.status = 'approved';
         resolve();
       })
+      .catch(e => reject(e));
     })
+    .catch(e => reject(e));
   })
 }
