@@ -20,11 +20,12 @@ const agentSearch = document.getElementById('agentSearch');
 const agentSearchBar = document.getElementById('agentSearchBar');
 const searchedTravelers = document.getElementById('searchedTravelers');
 const searchHeader = document.getElementById('searchHeader')
+let filteredUser = null;
 
 createNewTrip.addEventListener('submit', createNewTripFormHandler);
 signOut.addEventListener('click', logOut);
 login.addEventListener('submit', getUserByLogin);
-agentSearch.addEventListener('submit', renderSearchedUserTrips)
+agentSearch.addEventListener('submit', getSearchedUserTrips)
 document.body.addEventListener('click', async e => {
   if(e.target.matches(".deleteTrip")){
     const deleteButton = e.target;
@@ -72,6 +73,7 @@ async function renderAgentPage() {
   await renderPendingTrips();
   await renderAgentEarnings();
   await renderTodaysTrips();
+  await renderSearchedUserTrips();
 }
 
 async function renderAgentEarnings() {
@@ -79,11 +81,25 @@ async function renderAgentEarnings() {
   agentTotalEarnings.innerHTML =  `You have earned \$${earnings.toFixed(2)} in agent fees this year!`
 }
 
-async function renderSearchedUserTrips(e){
-  e.preventDefault();
-  let htmlData = "";
+async function getSearchedUserTrips(e){
+  if(e){
+    e.preventDefault();
+  }
   const searchedUser = (await UserRepository.getUsers()).find(user => user.name === agentSearchBar.value);
-  const trips = (await TripRepository.getTrips()).filter(trip => trip.userID === searchedUser.id);
+  if(searchedUser === undefined){
+    filteredUser === null;
+    return;
+  }
+  filteredUser = searchedUser;
+  render();
+}
+
+async function renderSearchedUserTrips(){
+  if(filteredUser === null){
+    return;
+  }
+  let htmlData = "";
+  const trips = (await TripRepository.getTrips()).filter(trip => trip.userID === filteredUser.id);
   let htmlCostData = 0;
   for(const trip of trips){
     const destination = await trip.getDestination();
@@ -97,9 +113,7 @@ async function renderSearchedUserTrips(e){
   };
   searchHeader.innerHTML = `<h3>This searched user has earned you \$${htmlCostData} in agent fees.</h3>`;
   searchedTravelers.innerHTML = htmlData;
-  render();
 }
-
 
 async function renderPendingTrips(){
   let htmlData = "";
