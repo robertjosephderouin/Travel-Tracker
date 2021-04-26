@@ -1,15 +1,35 @@
 import chai from 'chai';
+import User from '../src/User.js';
 const expect = chai.expect;
+var assert = require('chai').assert;
 
-describe('See if the tests are running', function() {
-  it('should return true', function() {
-    expect(true).to.equal(true);
+let sampleUser = {
+            "id": 1,
+            "name": "Ham Leadbeater",
+            "travelerType": "relaxer"
+}
+
+  describe('User', function() {
+
+    it('should have an id', function() {
+      var user = new User(sampleUser);
+
+      assert.equal(user.id, 1);
+
   });
 
-// is a class
+    it('should have an id', function() {
+      var user = new User(sampleUser);
 
-// getTrips
+      assert.equal(user.name, 'Ham Leadbeater');
 
-// getTripsforLastYear
+  });
+
+    it('should have an id', function() {
+      var user = new User(sampleUser);
+
+      assert.equal(user.travelerType, 'relaxer');
+
+  });
 
 });
