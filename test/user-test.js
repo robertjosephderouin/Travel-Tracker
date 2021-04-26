@@ -18,14 +18,14 @@ let sampleUser = {
 
   });
 
-    it('should have an id', function() {
+    it('should have a name', function() {
       var user = new User(sampleUser);
 
       assert.equal(user.name, 'Ham Leadbeater');
 
   });
 
-    it('should have an id', function() {
+    it('should have a type', function() {
       var user = new User(sampleUser);
 
       assert.equal(user.travelerType, 'relaxer');
