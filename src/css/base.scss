@@ -5,22 +5,81 @@ $darkAccent: #25273c;
 $primary: #777a92;
 
 body {
+  display:flex;
+  flex-flow:column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
   background-color: $primary;
   font-family: "Quicksand", sans-serif;
   color: $white;
+  text-shadow: 2px 2px 8px #161722;
+}
+
+.loginPage {
+  background-color: $darkAccent;
+  border-radius: 25px;
+  padding: 25px;
+  width: 200px;
+  height: 50px;
+}
+
+.userInfoHeader {
+  margin: 20px;
 }
 
 .dataSet {
-  display:flex;
+  grid-area: main;
+  display: flex;
+  justify-content: center;
+  align-content: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
+  background-color: $lightAccent;
+  border-radius: 25px;
+  margin: 20px;
+  padding: 20px;
 }
 
 .dataCard {
+  background-color: $darkAccent;
+  border-radius: 7px;
+  margin: 20px;
+  padding: 15px;
+  width: 250px;
+}
 
+::placeholder {
+  color: $white;
+}
+
+.inputField {
+  color: $white;
+  margin: 2px;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom-color: $darkAccent;
+}
+
+.buttons {
+  border-color: $lightAccent;
+  color: $lightAccent;
+  background-color: $darkAccent;
+  margin: 5px;
 }
 
 .newTrip {
-  display:flex;
+  grid-area: main;
+  display: flex;
+  justify-content: center;
+  align-content: flex-start;
+  flex-direction: row;
   flex-wrap: wrap;
+  border-radius: 25px;
+  margin: 20px;
+  padding: 20px;
 }
 
 .hide {
