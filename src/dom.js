@@ -20,21 +20,22 @@ const agentSearch = document.getElementById('agentSearch');
 const agentSearchBar = document.getElementById('agentSearchBar');
 const searchedTravelers = document.getElementById('searchedTravelers');
 const searchHeader = document.getElementById('searchHeader')
+let filteredUser = null;
 
 createNewTrip.addEventListener('submit', createNewTripFormHandler);
 signOut.addEventListener('click', logOut);
 login.addEventListener('submit', getUserByLogin);
-agentSearch.addEventListener('submit', renderSearchedUserTrips)
+agentSearch.addEventListener('submit', getSearchedUserTrips)
 document.body.addEventListener('click', async e => {
   if(e.target.matches(".deleteTrip")){
     const deleteButton = e.target;
     const deleteID = Number(deleteButton.dataset.tripid);
-    await TripRepository.deleteTrip(deleteID);
+    await TripRepository.deleteTrip(deleteID).catch(e => alert("Failed to delete trip, cannot access trip data."));
     render();
   } else if(e.target.matches(".approveTrip")){
     const approveButton = e.target;
     const approveID = Number(approveButton.dataset.tripid);
-    await TripRepository.approveTrip(approveID);
+    await TripRepository.approveTrip(approveID).catch(e => alert("Failed to approve trip, cannot access trip data."));
     render();
   }
 });
@@ -61,9 +62,9 @@ async function renderTravelerPage(){
 async function renderTravelerCost(){
   const user = await State.currentUser;
   let totalCost = 0;
-  const trips = await State.currentUser.then(user => user.getTripsForLastYear());
+  const trips = await State.currentUser.then(user => user.getTripsForLastYear().catch(e => alert("Failed to retrieve last years trips, cannot access trip data.")));
   for(const trip of trips){
-    totalCost += (await trip.getCost()).total;
+    totalCost += (await trip.getCost().catch(e => alert("Failed to get trip cost , cannot access trip data."))).total;
   }
   travelerTotalCost.innerHTML = `Welcome back ${user.name} your total cost for trips in the past 365 days is \$${totalCost}`;
 }
@@ -72,18 +73,33 @@ async function renderAgentPage() {
   await renderPendingTrips();
   await renderAgentEarnings();
   await renderTodaysTrips();
+  await renderSearchedUserTrips();
 }
 
 async function renderAgentEarnings() {
-  const earnings = await TripRepository.calculateAgentEarnings();
+  const earnings = await TripRepository.calculateAgentEarnings().catch(e => alert("Failed to calculate agent earnings, cannot access destination data."));
   agentTotalEarnings.innerHTML =  `You have earned \$${earnings.toFixed(2)} in agent fees this year!`
 }
 
-async function renderSearchedUserTrips(e){
-  e.preventDefault();
+async function getSearchedUserTrips(e){
+  if(e){
+    e.preventDefault();
+  }
+  const searchedUser = (await UserRepository.getUsers().catch(e => alert("Failed to retrieve user information from server."))).find(user => user.name === agentSearchBar.value);
+  if(searchedUser === undefined){
+    filteredUser === null;
+    return;
+  }
+  filteredUser = searchedUser;
+  render();
+}
+
+async function renderSearchedUserTrips(){
+  if(filteredUser === null){
+    return;
+  }
   let htmlData = "";
-  const searchedUser = (await UserRepository.getUsers()).find(user => user.name === agentSearchBar.value);
-  const trips = (await TripRepository.getTrips()).filter(trip => trip.userID === searchedUser.id);
+  const trips = (await TripRepository.getTrips().catch(e => alert("Failed to get trip information, cannot access trip data."))).filter(trip => trip.userID === filteredUser.id);
   let htmlCostData = 0;
   for(const trip of trips){
     const destination = await trip.getDestination();
@@ -97,13 +113,11 @@ async function renderSearchedUserTrips(e){
   };
   searchHeader.innerHTML = `<h3>This searched user has earned you \$${htmlCostData} in agent fees.</h3>`;
   searchedTravelers.innerHTML = htmlData;
-  render();
 }
-
 
 async function renderPendingTrips(){
   let htmlData = "";
-  const trips = (await TripRepository.getTrips()).filter(trip => trip.status === "pending");
+  const trips = (await TripRepository.getTrips().catch(e => alert("Failed to get trip information, cannot access trip data."))).filter(trip => trip.status === "pending");
   for(const trip of trips){
     const destination = await trip.getDestination();
     htmlData += `<div class="dataCard">`
@@ -122,10 +136,9 @@ async function renderPendingTrips(){
 
 async function renderTodaysTrips(){
   let htmlData = "";
-  const trips = (await TripRepository.getTripsForSameDay());
-  console.log(trips);
+  const trips = (await TripRepository.getTripsForSameDay().catch(e => alert("Failed to get todays trips, cannot access trip data.")));
   for(const trip of trips){
-    const destination = await trip.getDestination();
+    const destination = await trip.getDestination().catch(e => alert("Failed to get destination information, cannot access destination data."));
     htmlData += `<div class="dataCard">`
     htmlData += `<h3>${destination.destination}</h3>`
     htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
@@ -144,7 +157,7 @@ async function renderTrips(){
   let htmlData = "";
   const trips = await State.currentUser.then(user => user.getTrips());
   for(const trip of trips){
-    const destination = await trip.getDestination();
+    const destination = await trip.getDestination().catch(e => alert("Failed to get destination information, cannot access destination data."));
     htmlData += `<div class="dataCard">`
     htmlData += `<h3>${destination.destination}</h3>`
     htmlData += `<image src=${destination.image} width="100" alt=${destination.alt}>`
@@ -186,7 +199,7 @@ async function createNewTripFormHandler(e){
   const tripCost = await (new Trip(trip)).getCost();
   const confirmResult = confirm(`Trip cost is \$${tripCost.total}, cool?`);
   if(confirmResult){
-    await TripRepository.newTrip(trip);
+    await TripRepository.newTrip(trip).catch(e => alert("Failed to get create new trip, cannot access trip data."));
   }
   render();
 }
@@ -208,9 +221,9 @@ async function getUserByLogin(e){
     alert(errorMessage);
   } else {
     const userID = Number(matches[1]);
-    if((await UserRepository.getUsers()).find(user => user.id === userID)){
+    if((await UserRepository.getUsers().catch(e => alert("Failed to retrieve user login information from server."))).find(user => user.id === userID)){
       if(password === "travel2020") {
-        State.currentUser = UserRepository.getUser(userID);
+        State.currentUser = UserRepository.getUser(userID).catch(e => alert("Failed to get user information, cannot access user data."));
         State.currentPage = "traveler";
         render();
       } else {
