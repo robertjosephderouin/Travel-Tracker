@@ -1,5 +1,6 @@
 import Trip from './Trip';
 import State from './State';
+import { getTripData } from './apiCalls';
 import {
   isAfter,
   parse,
@@ -16,12 +17,10 @@ TripRepository.getTrips = () => {
   if(TripRepository.trips.length > 0){
     return Promise.resolve(TripRepository.trips);
   }
-  return fetch('http://localhost:3001/api/v1/trips')
-    .then(response => response.json())
-    .then(data => {
-      TripRepository.trips = data.trips.map(trip => new Trip(trip));
-      return TripRepository.trips;
-    });
+  return getTripData().then(data => {
+    TripRepository.trips = data.trips.map(trip => new Trip(trip));
+    return TripRepository.trips;
+  });
 }
 
 TripRepository.getTripsForLastYear = () => {
