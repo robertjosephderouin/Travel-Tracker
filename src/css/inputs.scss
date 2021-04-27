@@ -1,0 +1,39 @@
+::placeholder {
+  color: $white;
+}
+
+.inputField {
+  color: $white;
+  margin: 2px;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom-color: $darkAccent;
+}
+
+.buttons {
+  height: 50px;
+  width: 100%;
+  border-color: $lightAccent;
+  color: $lightAccent;
+  background-color: $darkAccent;
+  margin: 5px;
+}
+
+.newTrip {
+  grid-area: main;
+  display: flex;
+  justify-content: center;
+  align-content: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
+  border-radius: 25px;
+  margin: 20px;
+  padding: 20px;
+}
+
+.tripForm {
+  display: flex;
+  flex-flow: column;
+}
