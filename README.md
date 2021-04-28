@@ -34,6 +34,7 @@ The travel tracker allows users to login as either a traveler or an agent.  As a
   * Users can login in as either a traveler(1-50) or as the agency.
   * Users as the traveler can make trip requests by filling out a form at the bottom of the Traveler screen.
   * Users as the agent can approve requests made by travelers, search for specific travelers and delete trips made by travelers.
+  * Extension - Utilized date fns to make working with dates easier. 
 
 ## Technologies
 
